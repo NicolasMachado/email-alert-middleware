@@ -8,7 +8,7 @@ const {logger} = require('./utilities/logger');
 const {SMTP_URL, ALERT_FROM_EMAIL, ALERT_FROM_NAME, ALERT_TO_EMAIL} = process.env; 
 
 const emailData = {
-  from: ALERT_FROM_EMAIL,
+  from: `${ALERT_FROM_NAME}<${ALERT_FROM_EMAIL}>`,
   to: ALERT_TO_EMAIL,
   subject: "There was an error",
   text: "An error occured (plain text)",

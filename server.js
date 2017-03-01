@@ -37,6 +37,8 @@ app.use((err, req, res, next) => {
   if (err.name == 'FooError' || err.name == 'BarError') {
     console.log("send mail");
     emailData.subject = `ALERT: a ${err.name} error occurred`;
+    emailData.html = `<h3>An error occured</h3><p>A ${err.name} error occurred and returned the following message: <blockquote>${err.message}.</blockquote></p><p>The error stack is: <blockquote>${err.stack}.</blockquote><p/>`;
+    emailData.text = `An error occured\n\nA ${err.name} error occurred and returned the following message: ${err.message}.\n\nThe error stack is: ${err.stack}.`;
     sendEmail(emailData);
   }
   next(err);
