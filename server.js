@@ -8,7 +8,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const {logger} = require('./utilities/logger');
-const {sendEmail} = require('./emailer');
+const {sendEmail, emailData} = require('./emailer');
 // these are custom errors we've created
 const {FooError, BarError, BizzError} = require('./errors');
 
@@ -16,7 +16,7 @@ const app = express();
 
 // this route handler randomly throws one of `FooError`,
 // `BarError`, or `BizzError`
-const russianRoulette = (req, res, sendEmail) => {
+const russianRoulette = (req, res) => {
   const errors = [FooError, BarError, BizzError];
   throw new errors[Math.floor(Math.random() * errors.length)]('It blew up!');
 };
@@ -33,15 +33,20 @@ app.get('*', russianRoulette);
 //app.use(sendEmail);
 
 app.use((err, req, res, next) => {
-  logger.error(err.message);
-  res.status(500).json({error: 'Something went wrong'}).end();
+  logger.error(`The error is ${err.name}`);
+  if (err.name == 'FooError' || err.name == 'BarError') {
+    console.log("send mail");
+    emailData.subject = `ALERT: a ${err.name} error occurred`;
+    sendEmail(emailData);
+  }
+  next(err);
 });
-/*
+
 app.use((err, req, res, next) => {
   logger.error(err);
   res.status(500).json({error: 'Something went wrong'}).end();
 }); 
-*/
+
 const port = process.env.PORT || 8080;
 
 const listener = app.listen(port, function () {
