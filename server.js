@@ -8,6 +8,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const {logger} = require('./utilities/logger');
+const {sendEmail} = require('./emailer');
 // these are custom errors we've created
 const {FooError, BarError, BizzError} = require('./errors');
 
@@ -30,6 +31,7 @@ app.get('*', russianRoulette);
 // YOUR MIDDLEWARE FUNCTION should be activated here using
 // `app.use()`. It needs to come BEFORE the `app.use` call
 // below, which sends a 500 and error message to the client
+app.use(sendEmail);
 
 app.use((err, req, res, next) => {
   logger.error(err);
