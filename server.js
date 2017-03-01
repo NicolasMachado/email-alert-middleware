@@ -8,6 +8,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const {logger} = require('./utilities/logger');
+const {sendEmail, emailData} = require('./emailer');
 // these are custom errors we've created
 const {FooError, BarError, BizzError} = require('./errors');
 
@@ -17,8 +18,7 @@ const app = express();
 // `BarError`, or `BizzError`
 const russianRoulette = (req, res) => {
   const errors = [FooError, BarError, BizzError];
-  throw new errors[
-    Math.floor(Math.random() * errors.length)]('It blew up!');
+  throw new errors[Math.floor(Math.random() * errors.length)]('It blew up!');
 };
 
 
@@ -30,11 +30,22 @@ app.get('*', russianRoulette);
 // YOUR MIDDLEWARE FUNCTION should be activated here using
 // `app.use()`. It needs to come BEFORE the `app.use` call
 // below, which sends a 500 and error message to the client
+//app.use(sendEmail);
+
+app.use((err, req, res, next) => {
+  if (err.name == 'FooError' || err.name == 'BarError') {
+    emailData.subject = `ALERT: a ${err.name} error occurred`;
+    emailData.html = `<h3>An error occured</h3><p>A ${err.name} error occurred and returned the following message: <blockquote>${err.message}.</blockquote></p><p>The error stack is: <blockquote>${err.stack}.</blockquote><p/>`;
+    emailData.text = `An error occured\n\nA ${err.name} error occurred and returned the following message: ${err.message}.\n\nThe error stack is: ${err.stack}.`;
+    sendEmail(emailData);
+  }
+  next(err);
+});
 
 app.use((err, req, res, next) => {
   logger.error(err);
   res.status(500).json({error: 'Something went wrong'}).end();
-});
+}); 
 
 const port = process.env.PORT || 8080;
 

@@ -25,7 +25,7 @@ function BizzError(message) {
     Object.setPrototypeOf(pair[0], Error);
     pair[0].prototype = Object.create(Error.prototype);
     pair[0].prototype.name = pair[1];
-    pair[0].prototype.message = "";
+    pair[0].prototype.message = "this is a test message";
     pair[0].prototype.constructor = pair[0];
 });
 
