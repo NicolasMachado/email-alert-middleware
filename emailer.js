@@ -14,7 +14,9 @@ const emailData = {
     this.subject = `ALERT: a ${errorName} error occurred`;
   },
   createBody: function (errorName, errorMessage, errorStack) {
-    this.html = `<h3>An error occured</h3><p>A ${errorName} error occurred and returned the following message: <blockquote>${errorMessage}.</blockquote></p><p>The error stack is: <blockquote>${errorStack}.</blockquote><p/>`;
+    this.html = `<h3>An error occured</h3>
+                  <p>A ${errorName} error occurred and returned the following message: <blockquote>${errorMessage}.</blockquote></p>
+                  <p>The error stack is: <blockquote>${errorStack}.</blockquote><p/>`;
     this.text = `An error occured\n\nA ${errorName} error occurred and returned the following message: ${errorMessage}.\n\nThe error stack is: ${errorStack}.`;
   }
 };
