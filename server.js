@@ -25,18 +25,16 @@ const russianRoulette = (req, res) => {
 app.use(morgan('common', {stream: logger.stream}));
 
 // for any GET request, we'll run our `russianRoulette` function
-app.get('*', russianRoulette);
+app.get('/', russianRoulette);
 
 // YOUR MIDDLEWARE FUNCTION should be activated here using
 // `app.use()`. It needs to come BEFORE the `app.use` call
 // below, which sends a 500 and error message to the client
-//app.use(sendEmail);
 
 app.use((err, req, res, next) => {
   if (err.name == 'FooError' || err.name == 'BarError') {
-    emailData.subject = `ALERT: a ${err.name} error occurred`;
-    emailData.html = `<h3>An error occured</h3><p>A ${err.name} error occurred and returned the following message: <blockquote>${err.message}.</blockquote></p><p>The error stack is: <blockquote>${err.stack}.</blockquote><p/>`;
-    emailData.text = `An error occured\n\nA ${err.name} error occurred and returned the following message: ${err.message}.\n\nThe error stack is: ${err.stack}.`;
+    emailData.createSubject(err.name);
+    emailData.createBody(err.name, err.message, err.stack);
     sendEmail(emailData);
   }
   next(err);
